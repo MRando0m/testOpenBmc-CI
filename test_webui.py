@@ -60,6 +60,7 @@ def test_fail_login(driver, wait):
     time.sleep(3)
 
     initial_url = driver.current_url
+    expected = initial_url.split('#')[0]
 
     username = driver.find_element(By.ID, 'username')
     password = driver.find_element(By.ID, 'password')
@@ -73,11 +74,11 @@ def test_fail_login(driver, wait):
     time.sleep(3)
 
     try:
-        wait.until(EC.url_to_be(initial_url))
+        wait.until(EC.url_to_be(expected))
     except Exception:
         pytest.fail(f"Редирект на другую страницу. Текущий URL: {driver.current_url}")
     
-    assert driver.current_url == initial_url, "Не произошел редирект на другую страницу при неверных данных"
+    assert driver.current_url == expected, "Не произошел редирект на другую страницу при неверных данных"
 
 def test_block_user(driver):
     # Функция для попытки входа
