@@ -54,7 +54,7 @@ def test_success_login(driver):
     # Проверка успешной авторизации (пример проверки)
     assert successWindow.is_displayed()
 
-def test_fail_login(driver):
+def test_fail_login(driver, wait):
     # Переход на страницу авторизации
     driver.get('https://localhost:2443/?next=/login#/login')
     time.sleep(3)
