@@ -3,6 +3,8 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 
 # Фикстура для инициализации и завершения работы драйвера
@@ -23,6 +25,10 @@ def driver():
 
     # Завершение работы драйвера после выполнения теста
     driver.quit()
+
+@pytest.fixture
+def wait(driver):
+    return WebDriverWait(driver, 10)
 
 # Тест для проверки авторизации
 def test_success_login(driver):
@@ -53,20 +59,25 @@ def test_fail_login(driver):
     driver.get('https://localhost:2443/?next=/login#/login')
     time.sleep(3)
 
+    initial_url = driver.current_url
+
     username = driver.find_element(By.ID, 'username')
     password = driver.find_element(By.ID, 'password')
     login_button = driver.find_element(By.CLASS_NAME, 'btn.btn-primary.mt-3')
 
     # Ввод данных для авторизации
     username.send_keys('root')
-    password.send_keys('OpenBmc') # Не верный пароль
+    password.send_keys('OpenBmc') # Неверный пароль
 
     login_button.click()
     time.sleep(3)
 
-    errorWindow = driver.find_element(By.CLASS_NAME, 'neterror')
-
-    assert errorWindow.is_displayed()
+    try:
+        wait.until(EC.url_to_be(initial_url))
+    except Exception:
+        pytest.fail(f"Редирект на другую страницу. Текущий URL: {driver.current_url}")
+    
+    assert driver.current_url == initial_url, "Не произошел редирект на другую страницу при неверных данных"
 
 def test_block_user(driver):
     # Функция для попытки входа
