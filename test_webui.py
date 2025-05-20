@@ -59,9 +59,6 @@ def test_fail_login(driver, wait):
     driver.get('https://localhost:2443/?next=/login#/login')
     time.sleep(3)
 
-    initial_url = driver.current_url
-    expected = initial_url.split('#')[0]
-
     username = driver.find_element(By.ID, 'username')
     password = driver.find_element(By.ID, 'password')
     login_button = driver.find_element(By.CLASS_NAME, 'btn.btn-primary.mt-3')
@@ -71,14 +68,10 @@ def test_fail_login(driver, wait):
     password.send_keys('OpenBmc') # Неверный пароль
 
     login_button.click()
-    time.sleep(3)
+    time.sleep(5)
 
-    try:
-        wait.until(EC.url_to_be(expected))
-    except Exception:
-        pytest.fail(f"Редирект на другую страницу. Текущий URL: {driver.current_url}")
-    
-    assert driver.current_url == expected, "Не произошел редирект на другую страницу при неверных данных"
+    login_window = driver.find_element(By.CLASS_NAME, 'login-main')
+    assert login_window.is_displayed()
 
 def test_block_user(driver):
     # Функция для попытки входа
