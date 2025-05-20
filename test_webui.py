@@ -54,7 +54,7 @@ def test_success_login(driver):
     # Проверка успешной авторизации (пример проверки)
     assert successWindow.is_displayed()
 
-def test_fail_login(driver, wait):
+def test_fail_login(driver):
     # Переход на страницу авторизации
     driver.get('https://localhost:2443/?next=/login#/login')
     time.sleep(3)
@@ -70,7 +70,7 @@ def test_fail_login(driver, wait):
     login_button.click()
     time.sleep(5)
 
-    login_window = driver.find_element(By.CLASS_NAME, 'login-main')
+    login_window = driver.find_element(By.CLASS_NAME, 'btn.btn-primary.mt-3')
     assert login_window.is_displayed()
 
 def test_block_user(driver):
